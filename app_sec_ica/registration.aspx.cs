@@ -46,7 +46,7 @@ namespace app_sec_ica
                 using(SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["db"].ConnectionString))
                 {
                     con.Open();
-                    using(SqlCommand command = new SqlCommand("insert into account values (@fn, @ln, @cc, @email, @pw, @salt, @iv, @key)", con))
+                    using(SqlCommand command = new SqlCommand("insert into account values (@fn, @ln, @cc, @email, @pw, @salt, @iv, @key, 0, current_timestamp)", con))
                     {
                         command.Parameters.addWithValue("@fn", first_name.Text)
                             .addWithValue("@ln", last_name.Text)
@@ -59,6 +59,7 @@ namespace app_sec_ica
                         command.ExecuteNonQuery();
                     }
                 }
+                Response.Redirect("login");
             } else error.Text = "Please check your password again.";
             
         }
