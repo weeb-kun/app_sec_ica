@@ -9,8 +9,9 @@
 <body>
     <form id="form1" runat="server">
         <asp:Label runat="server" ID="msg" Visible="false"></asp:Label>
+        <br />
         <div>
-            <asp:Label ID="username" runat="server"></asp:Label>
+            Username: <asp:Label ID="username" runat="server"></asp:Label>
             <asp:Button ID="log_out" runat="server" Text="Logout" OnClick="logout"/>
         </div>
         <div>

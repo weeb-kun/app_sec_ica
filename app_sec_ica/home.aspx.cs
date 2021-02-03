@@ -34,6 +34,26 @@ namespace app_sec_ica
 
         protected void logout(Object sender, EventArgs e)
         {
+            using (SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["db"].ConnectionString))
+            {
+                con.Open();
+                using (SqlDataAdapter adapter = new SqlDataAdapter("select * from account where email = @email", con))
+                {
+                    adapter.SelectCommand.Parameters.AddWithValue("@email", Session["username"].ToString());
+                    DataSet set = new DataSet();
+                    adapter.Fill(set);
+                    if (set.Tables[0].Rows.Count >= 0)
+                    {
+                        // check if user havent change pw
+                        if ((DateTime)set.Tables[0].Rows[0]["last_change"] < DateTime.Now.AddMinutes(-15))
+                        {
+                            msg.Text = "you must change your password now.";
+                            msg.Visible = true;
+                            return;
+                        }
+                    }
+                }
+            }
             // clear session
             Session.Clear();
             Session.Abandon();
@@ -72,6 +92,9 @@ namespace app_sec_ica
                         {
                             msg.Text = "you are not allowed to change your password within 5 minutes of changing your password.";
                             msg.Visible = true;
+                        } else
+                        {
+                            Response.Redirect("changepw");
                         }
                     }
                 }

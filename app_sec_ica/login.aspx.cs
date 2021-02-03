@@ -19,7 +19,6 @@ namespace app_sec_ica
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
         }
 
         protected void onSubmit(Object sender, EventArgs e)
