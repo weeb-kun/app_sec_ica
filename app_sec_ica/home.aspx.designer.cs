@@ -24,6 +24,15 @@ namespace app_sec_ica
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
+        /// msg control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label msg;
+
+        /// <summary>
         /// username control.
         /// </summary>
         /// <remarks>
@@ -40,5 +49,14 @@ namespace app_sec_ica
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button log_out;
+
+        /// <summary>
+        /// change_pw control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button change_pw;
     }
 }

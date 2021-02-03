@@ -54,7 +54,7 @@ namespace app_sec_ica
                         {
                             // authenticated
                             // check if not on lockout
-                            using(SqlDataAdapter checkLockout = new SqlDataAdapter("select failures, lockout from account where email = @email", con))
+                            using(SqlDataAdapter checkLockout = new SqlDataAdapter("select * from account where email = @email", con))
                             {
                                 checkLockout.SelectCommand.Parameters.AddWithValue("@email", email.Text);
                                 DataSet set = new DataSet();
@@ -64,8 +64,14 @@ namespace app_sec_ica
                                     DataRow row = set.Tables[0].Rows[0];
                                     if ((int)row["failures"] < 3)
                                     {
+                                        // check if last password change is more than 15mins ago
+                                        if((DateTime)row["last_change"] < DateTime.Now.AddMinutes(-15))
+                                        {
+                                            Session["msg"] = "you must change your password now.";
+                                        }
+
                                         // set session and redirect to home
-                                        Session["username"] = data.Tables[0].Rows[0]["first_name"].ToString();
+                                        Session["username"] = data.Tables[0].Rows[0]["email"].ToString();
                                         Session["auth"] = Guid.NewGuid().ToString();
                                         Response.Cookies.Add(new HttpCookie("auth", Session["auth"].ToString()));
                                         Response.Redirect("home");
@@ -74,7 +80,7 @@ namespace app_sec_ica
                                         if((DateTime)row["lockout"] > DateTime.Now)
                                         {
                                             // havent expire
-                                            error.Text = $"Sorry. your account has been locked out due to many unsuccessful attempts at logging in.\nPlease wait another {((DateTime)row["lockout"] - DateTime.Now).TotalMinutes} Minutes.";
+                                            error.Text = $"Sorry. your account has been locked out due to many unsuccessful attempts at logging in.\nPlease wait another {((DateTime)row["lockout"] - DateTime.Now).Minutes} Minutes.";
                                             return;
                                         } else
                                         {
@@ -85,7 +91,7 @@ namespace app_sec_ica
                                                 command.ExecuteNonQuery();
                                             }
                                             // set session and redirect to home
-                                            Session["username"] = data.Tables[0].Rows[0]["first_name"].ToString();
+                                            Session["username"] = data.Tables[0].Rows[0]["email"].ToString();
                                             Session["auth"] = Guid.NewGuid().ToString();
                                             Response.Cookies.Add(new HttpCookie("auth", Session["auth"].ToString()));
                                             Response.Redirect("home");
@@ -100,7 +106,7 @@ namespace app_sec_ica
                             // check if reached 3 failures
                             using(SqlDataAdapter adapter = new SqlDataAdapter("select failures from account where email = @email", con))
                             {
-                                adapter.SelectCommand.Parameters.AddWithValue("@email", email);
+                                adapter.SelectCommand.Parameters.AddWithValue("@email", email.Text);
                                 DataSet ds = new DataSet();
                                 adapter.Fill(ds);
                                 if(ds.Tables[0].Rows.Count >= 1)
@@ -112,7 +118,9 @@ namespace app_sec_ica
                                         using(SqlCommand lockout = new SqlCommand("update account set lockout = @dt where email = @email", con))
                                         {
                                             // set 5 min lockout
-                                            lockout.Parameters.AddWithValue("@dt", DateTime.Now.AddMinutes(5).ToString("dd/mm/yyyy:g"));
+                                            lockout.Parameters.AddWithValue("@dt", DateTime.Now.AddMinutes(5).ToString("dd/mm/yyyy hh:mm"));
+                                            lockout.Parameters.AddWithValue("@email", email.Text);
+                                            lockout.ExecuteNonQuery();
                                         }
                                         return;
                                     } else
@@ -124,7 +132,7 @@ namespace app_sec_ica
                             // add 1 failure to db
                             using(SqlCommand command = new SqlCommand("update account set failures = failures + 1 where email = @email", con))
                             {
-                                command.Parameters.AddWithValue("@email", email);
+                                command.Parameters.AddWithValue("@email", email.Text);
                                 command.ExecuteNonQuery();
                             }
                         }
