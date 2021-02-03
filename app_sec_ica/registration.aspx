@@ -12,22 +12,14 @@
             var button = document.getElementById("<%= submit.ClientID %>");
             var error = document.getElementById("error_msg");
             var hasError = false;
-            if (password.value.length < 8) {
-                hasError = true;
-                button.disabled = true;
-                error.value = "password must contain at least 8 characters"
-            } else {
-                button.disabled = false;
-                error.value = "";
-            }
             // search for numbers, small, and capitol letters
-            if (password.value.search(/[0-9]/) != -1 && password.value.search(/[a-z]/) != -1 && password.value.search(/[A-Z]/)) {
+            if (password.value.search(/[0-9]/) != -1 && password.value.search(/[a-z]/) != -1 && password.value.search(/[A-Z]/) != -1 && password.value.length >= 8) {
                 // password passed
                 button.disabled = false;
-                error.value = "password must contain 1 number, 1 lowercase and 1 uppercase character."
             } else {
                 hasError = true;
                 button.disabled = true;
+                error.value = "password must contain 1 number, 1 lowercase and 1 uppercase character."
             }
 
             // check if other fields are empty
@@ -63,10 +55,10 @@
             <asp:TextBox ID="credit_card" runat="server"></asp:TextBox>
             <br />
             Email:
-            <asp:TextBox ID="email" runat="server"></asp:TextBox>
+            <asp:TextBox ID="email" runat="server" TextMode="Email"></asp:TextBox>
             <br />
             Password:
-            <asp:TextBox ID="password" runat="server" onkeyup="javascript:validate()"></asp:TextBox>
+            <asp:TextBox ID="password" runat="server" onkeyup="javascript:validate()" TextMode="Password"></asp:TextBox>
             <p id="error_msg"></p>
             <asp:Label runat="server" ID="error" Visible="false"></asp:Label>
             <br />
