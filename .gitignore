@@ -2,3 +2,4 @@ connected*services/
 packages/
 app_sec.mdf
 app_sec_log.ldf
+/app_sec_ica/bin/

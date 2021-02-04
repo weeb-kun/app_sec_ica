@@ -1,2 +1,5 @@
 connected*services/
 packages/
+app_sec.mdf
+app_sec_log.ldf
+/bin/
